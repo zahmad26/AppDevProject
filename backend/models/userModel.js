@@ -6,10 +6,11 @@ const userSchema = new mongoose.Schema(
         lname: { type: String, required: true },
         username: { type: String, required: true },
         email: { type: String, required: true, unique: true },
-        password: { type: String, required: true },
+        password: { type: String, required: true, minlength: 8 },
         favourites: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Book' }],
         img: { type: String },
-        userRole: { type: String, ref: "UserRole", default: "reader"}
+        userRole: { type: String, ref: "UserRole", default: "reader" },
+        token: { type: String }
     }
 );
 
