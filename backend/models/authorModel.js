@@ -4,7 +4,7 @@ const authorSchema = new mongoose.Schema(
     {
         aname: { type: String, required: true },
         description: { type: String, required: true },
-        rating: { type: Number, required: true },
+        rating: { type: Number, default: 0 },
         aimg: { type: String }
     }
 );

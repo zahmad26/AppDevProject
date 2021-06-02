@@ -22,9 +22,13 @@ app.use(
 
 const userRoutes = require("./routes/userRoutes");
 const bookRoutes = require("./routes/bookRoutes");
+const adminRoutes = require("./routes/adminRoutes");
+const authorRoutes = require("./routes/authorRoutes");
 
 app.use("/api/users", userRoutes);
 app.use("/api/books", bookRoutes);
+app.use("/api/add", adminRoutes);
+app.use("/api/authors", authorRoutes);
 
 mongoose.connect(
   process.env.URL_DB,
