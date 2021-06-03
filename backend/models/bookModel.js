@@ -6,12 +6,10 @@ const bookSchema = new mongoose.Schema(
         author: { type: mongoose.Schema.Types.ObjectId, ref: 'Author', required: true },
         description: { type: String, required: true },
         category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', required: true },
+        url: { type: String },
         reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Review' }],
-        avgRating: { type: Number },
-        reviewCount: { type: Number },
+        rating: { type: Number },
         dateAdded: { type: Date },
-        img: { type: String },
-        bookPdf: { type: String },
         isFavourite: {type:Boolean, default:false}
 
     }

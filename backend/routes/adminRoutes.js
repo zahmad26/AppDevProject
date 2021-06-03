@@ -17,8 +17,8 @@ router.post("/book", async (req, res) => {
         author: req.body.author,
         description: req.body.description,
         category: req.body.category,
-        reviews: req.body.reviews,
-        img: req.body.img,
+        url: req.body.url,
+        rating: req.body.rating
       });
 
       let book = await Book.find({ title: newBook.title });

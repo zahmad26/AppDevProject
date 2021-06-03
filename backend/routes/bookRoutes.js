@@ -26,10 +26,13 @@ router.put("/favourites/add", protect, async (req, res) => {
   const id = req.id;
   let user = await User.findOne({ _id: id });
   if (user) {
-    if (
-      user.favourites.filter((i) => i.toString() === req.body._id).length > 0
-    ) {
-      return res.status(400).json({ msg: "book already favourited" });
+    console.log("here", user.favourites);
+    if (user.favourites.length > 1) {
+      if (
+        user.favourites.filter((i) => i.toString() === req.body._id).length > 0
+      ) {
+        return res.status(400).json({ msg: "book already favourited" });
+      }
     }
     user.favourites.push(req.body._id);
     await user.save();
@@ -143,17 +146,17 @@ router.get("/trending", protect, async (req, res) => {
 router.get("/:id", protect, async (req, res) => {
   try {
     const book = await Book.findById(req.params.id).populate(
-      "author",
-      "category",
-      {
-        path: "reviews",
-        populate: [
-          {
-            path: "reviewer",
-          },
-        ],
-      }
+      ["author", "category"]
+      // {
+      //   path: "reviews",
+      //   populate: [
+      //     {
+      //       path: "reviewer",
+      //     },
+      //   ],
+      // }
     );
+    console.log(book);
     if (book) {
       res.status(200).json({
         book: book,
@@ -169,17 +172,20 @@ router.get("/:id", protect, async (req, res) => {
 //get all books
 router.get("/", protect, async (req, res) => {
   try {
-    const books = await Book.find().populate("author", "category", {
-      path: "reviews",
-      populate: [
-        {
-          path: "reviewer",
-        },
-      ],
-    });
+    const books = await Book.find().populate(["author", "category",] 
+    // {
+    //   path: "reviews",
+    //   populate: [
+    //     {
+    //       path: "reviewer",
+    //     },
+    //   ],
+    // }
+    );
+    console.log("books",books)
     if (books) {
       res.status(200).json({
-        books: book,
+        books: books,
       });
     } else {
       res.json(output("Coud Not Get Books"));
