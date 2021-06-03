@@ -19,6 +19,7 @@ const output = require("../utils/output");
 
 router.post("/register", async (req, res) => {
   try {
+    console.log("in signup api");
     if (
       req.body.fname &&
       req.body.lname &&
@@ -42,8 +43,8 @@ router.post("/register", async (req, res) => {
       if (newUser) {
         return res.json(
           output("User Created succesfully and Signed In", {
-            user_id: newUser.fname,
-            userRole: newUser.userRole,
+            fname: newUser.fname,
+            id: newUser._id,
             token: generateToken(newUser._id),
           })
         );
@@ -60,6 +61,7 @@ router.post("/register", async (req, res) => {
 
 router.post("/login", async (req, res) => {
   try {
+    console.log("in login api")
     if (req.body.email && req.body.password) {
       const { email, password } = req.body;
       let user = await User.findOne({ email: email });
@@ -67,10 +69,11 @@ router.post("/login", async (req, res) => {
       if (!user || !match) {
         res.json(output("Invalid Email or Password"));
       } else {
+        console.log("Login Success");
         res.status(200).json(
           output("Log In Success", {
             fname: user.fname,
-            userRole: user.userRole,
+            id: user._id,
             token: generateToken(user._id),
           })
         );

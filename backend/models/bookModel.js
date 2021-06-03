@@ -11,7 +11,8 @@ const bookSchema = new mongoose.Schema(
         reviewCount: { type: Number },
         dateAdded: { type: Date },
         img: { type: String },
-        bookPdf: { type: String }
+        bookPdf: { type: String },
+        isFavourite: {type:Boolean, default:false}
 
     }
 );

@@ -22,11 +22,48 @@ router.get("/favourites", protect, async (req, res) => {
 });
 
 //add to favourites
-router.put("/favourites", protect, async (req, res) => {
+router.put("/favourites/add", protect, async (req, res) => {
   const id = req.id;
   let user = await User.findOne({ _id: id });
   if (user) {
+    if (
+      user.favourites.filter((i) => i.toString() === req.body._id).length > 0
+    ) {
+      return res.status(400).json({ msg: "book already favourited" });
+    }
     user.favourites.push(req.body._id);
+    await user.save();
+    let book = await Book.findOne({ _id: req.body._id });
+    book.isFavourite = true;
+    await book.save();
+    res.status(200).json(
+      output("User Favourites", {
+        favourites: user.favourites,
+      })
+    );
+  } else {
+    res.json(output("Coud Not Get favourites"));
+  }
+});
+
+//remove from favourites
+router.put("/favourites/remove", protect, async (req, res) => {
+  const id = req.id;
+  let user = await User.findOne({ _id: id });
+  if (user) {
+    if (
+      user.favourites.filter((i) => i.toString() === req.body._id).length === 0
+    ) {
+      return res.status(400).json({ msg: "book has not been favourited" });
+    }
+    const removeIndex = user.favourites
+      .map((i) => i.toString())
+      .indexOf(req.body._id);
+    user.favourites.splice(removeIndex, 1);
+    await user.save();
+    let book = await Book.findOne({ _id: req.body._id });
+    book.isFavourite = false;
+    await book.save();
     res.status(200).json(
       output("User Favourites", {
         favourites: user.favourites,
@@ -40,7 +77,7 @@ router.put("/favourites", protect, async (req, res) => {
 //get all categories
 router.get("/category", protect, async (req, res) => {
   try {
-    console.log("here")
+    console.log("here");
     const categories = await Category.find();
     if (categories) {
       res.status(200).json({
@@ -57,10 +94,10 @@ router.get("/category", protect, async (req, res) => {
 //get popular books
 router.get("/popular", protect, async (req, res) => {
   try {
-    const books = await Book.find().sort({ avgRating: -1 }).limit(15);
+    const books = await Book.find().sort({ rating: -1 }).limit(15);
     if (books) {
       res.status(200).json({
-        PopularBooks: books,
+        popular: books,
       });
     } else {
       res.json(output("Coud Not Get Popular Books"));
@@ -76,7 +113,7 @@ router.get("/latest", protect, async (req, res) => {
     const books = await Book.find().sort({ dateAdded: -1 }).limit(15);
     if (books) {
       res.status(200).json({
-        LatestBooks: books,
+        latest: books,
       });
     } else {
       res.json(output("Coud Not Get Latest Books"));
@@ -92,7 +129,7 @@ router.get("/trending", protect, async (req, res) => {
     const books = await Book.find().sort({ dateAdded: -1 }).limit(15);
     if (books) {
       res.status(200).json({
-        LatestBooks: books,
+        trending: books,
       });
     } else {
       res.json(output("Coud Not Get Latest Books"));
@@ -151,6 +188,5 @@ router.get("/", protect, async (req, res) => {
     res.status(500).json(output("Get Books Failed"));
   }
 });
-
 
 module.exports = router;
