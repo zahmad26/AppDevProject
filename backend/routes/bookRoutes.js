@@ -105,6 +105,7 @@ router.get("/popular", protect, async (req, res) => {
     let myBooks = [];
     books.map((book) => {
       myBook = {
+        bookID: book._id,
         title: book.title,
         author: book.author.aname,
         authorID: book.author._id,
@@ -140,6 +141,7 @@ router.get("/latest", protect, async (req, res) => {
     let myBooks = [];
     books.map((book) => {
       myBook = {
+        bookID: book._id,
         title: book.title,
         author: book.author.aname,
         authorID: book.author._id,
@@ -174,6 +176,7 @@ router.get("/trending", protect, async (req, res) => {
     let myBooks = [];
     books.map((book) => {
       myBook = {
+        bookID: book._id,
         title: book.title,
         author: book.author.aname,
         authorID: book.author._id,
@@ -214,6 +217,7 @@ router.get("/:id", protect, async (req, res) => {
     );
     console.log(book);
     let myBook = {
+      bookID: book._id,
       title: book.title,
       author: book.author.aname,
       authorID: book.author._id,
@@ -254,6 +258,7 @@ router.get("/", protect, async (req, res) => {
     let myBooks = [];
     books.map((book) => {
       myBook = {
+        bookID: book._id,
         title: book.title,
         author: book.author.aname,
         authorID: book.author._id,
