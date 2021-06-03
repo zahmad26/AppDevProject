@@ -10,10 +10,26 @@ const output = require("../utils/output");
 router.get("/favourites", protect, async (req, res) => {
   const id = req.id;
   let user = await User.findOne({ _id: id }).populate("favourites");
+  let myBooks = [];
+    user.favourites.map((book) => {
+      myBook = {
+        bookID: book._id,
+        title: book.title,
+        author: book.author.aname,
+        authorID: book.author._id,
+        category: book.category.cname,
+        rating: book.rating,
+        reviews: book.reviews,
+        isFavourite: book.isFavourite,
+        url: book.url,
+        description: book.description,
+      };
+      myBooks.push(myBook);
+    });
   if (user) {
     res.status(200).json(
       output("User Favourites", {
-        favourites: user.favourites,
+        favourites: myBooks,
       })
     );
   } else {
