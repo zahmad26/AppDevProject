@@ -97,10 +97,29 @@ router.get("/category", protect, async (req, res) => {
 //get popular books
 router.get("/popular", protect, async (req, res) => {
   try {
-    const books = await Book.find().sort({ rating: -1 }).limit(15);
+    const books = await Book.find()
+      .sort({ rating: -1 })
+      .limit(15)
+      .populate(["author", "category"]);
+
+    let myBooks = [];
+    books.map((book) => {
+      myBook = {
+        title: book.title,
+        author: book.author.aname,
+        authorID: book.author._id,
+        category: book.category.cname,
+        rating: book.rating,
+        reviews: book.reviews,
+        isFavourite: book.isFavourite,
+        url: book.url,
+        description: book.description,
+      };
+      myBooks.push(myBook);
+    });
     if (books) {
       res.status(200).json({
-        popular: books,
+        popular: myBooks,
       });
     } else {
       res.json(output("Coud Not Get Popular Books"));
@@ -113,10 +132,29 @@ router.get("/popular", protect, async (req, res) => {
 //get latest books
 router.get("/latest", protect, async (req, res) => {
   try {
-    const books = await Book.find().sort({ dateAdded: -1 }).limit(15);
+    const books = await Book.find()
+      .sort({ dateAdded: -1 })
+      .limit(15)
+      .populate(["author", "category"]);
+
+    let myBooks = [];
+    books.map((book) => {
+      myBook = {
+        title: book.title,
+        author: book.author.aname,
+        authorID: book.author._id,
+        category: book.category.cname,
+        rating: book.rating,
+        reviews: book.reviews,
+        isFavourite: book.isFavourite,
+        url: book.url,
+        description: book.description,
+      };
+      myBooks.push(myBook);
+    });
     if (books) {
       res.status(200).json({
-        latest: books,
+        latest: myBooks,
       });
     } else {
       res.json(output("Coud Not Get Latest Books"));
@@ -129,10 +167,28 @@ router.get("/latest", protect, async (req, res) => {
 //get trending books
 router.get("/trending", protect, async (req, res) => {
   try {
-    const books = await Book.find().sort({ dateAdded: -1 }).limit(15);
+    const books = await Book.find()
+      .sort({ dateAdded: -1 })
+      .limit(15)
+      .populate(["author", "category"]);
+    let myBooks = [];
+    books.map((book) => {
+      myBook = {
+        title: book.title,
+        author: book.author.aname,
+        authorID: book.author._id,
+        category: book.category.cname,
+        rating: book.rating,
+        reviews: book.reviews,
+        isFavourite: book.isFavourite,
+        url: book.url,
+        description: book.description,
+      };
+      myBooks.push(myBook);
+    });
     if (books) {
       res.status(200).json({
-        trending: books,
+        trending: myBooks,
       });
     } else {
       res.json(output("Coud Not Get Latest Books"));
@@ -157,9 +213,20 @@ router.get("/:id", protect, async (req, res) => {
       // }
     );
     console.log(book);
+    let myBook = {
+      title: book.title,
+      author: book.author.aname,
+      authorID: book.author._id,
+      category: book.category.cname,
+      rating: book.rating,
+      reviews: book.reviews,
+      isFavourite: book.isFavourite,
+      url: book.url,
+      description: book.description,
+    };
     if (book) {
       res.status(200).json({
-        book: book,
+        book: myBook,
       });
     } else {
       res.json(output("Coud Not Get Book Details"));
@@ -172,20 +239,36 @@ router.get("/:id", protect, async (req, res) => {
 //get all books
 router.get("/", protect, async (req, res) => {
   try {
-    const books = await Book.find().populate(["author", "category",] 
-    // {
-    //   path: "reviews",
-    //   populate: [
-    //     {
-    //       path: "reviewer",
-    //     },
-    //   ],
-    // }
+    const books = await Book.find().populate(
+      ["author", "category"]
+      // {
+      //   path: "reviews",
+      //   populate: [
+      //     {
+      //       path: "reviewer",
+      //     },
+      //   ],
+      // }
     );
-    console.log("books",books)
+    console.log("books", books);
+    let myBooks = [];
+    books.map((book) => {
+      myBook = {
+        title: book.title,
+        author: book.author.aname,
+        authorID: book.author._id,
+        category: book.category.cname,
+        rating: book.rating,
+        reviews: book.reviews,
+        isFavourite: book.isFavourite,
+        url: book.url,
+        description: book.description,
+      };
+      myBooks.push(myBook);
+    });
     if (books) {
       res.status(200).json({
-        books: books,
+        books: myBooks,
       });
     } else {
       res.json(output("Coud Not Get Books"));

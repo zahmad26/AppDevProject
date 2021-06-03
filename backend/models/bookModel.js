@@ -12,7 +12,8 @@ const bookSchema = new mongoose.Schema(
         dateAdded: { type: Date },
         isFavourite: {type:Boolean, default:false}
 
-    }
+    },
+    { timestamps: true }    
 );
 
 const Book = mongoose.model("Book", bookSchema, 'Books');
