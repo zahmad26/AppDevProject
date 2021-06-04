@@ -9,7 +9,17 @@ const output = require("../utils/output");
 //favourites
 router.get("/favourites", protect, async (req, res) => {
   const id = req.id;
-  let user = await User.findOne({ _id: id }).populate("favourites");
+  let user = await User.findOne({ _id: id }).populate({
+      path: "favourites",
+      populate: [
+        {
+          path: "author",
+        },
+        {
+          path: "category"
+        }
+      ],
+    });
   let myBooks = [];
     user.favourites.map((book) => {
       myBook = {
@@ -80,9 +90,6 @@ router.put("/favourites/remove", protect, async (req, res) => {
       .indexOf(req.body._id);
     user.favourites.splice(removeIndex, 1);
     await user.save();
-    let book = await Book.findOne({ _id: req.body._id });
-    book.isFavourite = false;
-    await book.save();
     res.status(200).json(
       output("User Favourites", {
         favourites: user.favourites,
@@ -186,7 +193,7 @@ router.get("/latest", protect, async (req, res) => {
 router.get("/trending", protect, async (req, res) => {
   try {
     const books = await Book.find()
-      .sort({ dateAdded: -1 })
+      .sort({ rating: 1 })
       .limit(15)
       .populate(["author", "category"]);
     let myBooks = [];

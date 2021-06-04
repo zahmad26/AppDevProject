@@ -61,7 +61,7 @@ router.post("/register", async (req, res) => {
 
 router.post("/login", async (req, res) => {
   try {
-    console.log("in login api")
+    console.log("in login api");
     if (req.body.email && req.body.password) {
       const { email, password } = req.body;
       let user = await User.findOne({ email: email });
@@ -112,27 +112,39 @@ router.get("/profile", protect, async (req, res) => {
 //update profile
 router.put("/profile/update", protect, async (req, res) => {
   try {
-    if (req.body) {
-      delete req.body._id;
-      await User.updateOne({ _id: req.id }, { $set: req.body });
-      let user = await User.findOne({ _id: req.id });
-      if (user) {
-        res.status(200).json(
-          output("Updated Profile", {
-            fname: user.fname,
-            lname: user.lname,
-            username: user.username,
-            email: user.email,
-            password: user.password,
-            img: user.img,
-          })
-        );
-      } else {
-        res.json(output("Coud Not Update Profile"));
-      }
+    const id = req.id;
+    const update = req.body;
+    console.log(req.body)
+    await User.findByIdAndUpdate(id, update, {
+      useFindAndModify: false,
+    });
+    const user = await User.findById(id);
+    if (user) {
+      res.status(200).json(output("Updated Profile", user));
     } else {
-      output("No fields given to update");
+      res.json(output("Coud Not Update Profile"));
     }
+    // if (req.body) {
+    //   delete req.body._id;
+    //   await User.updateOne({ _id: req.id }, { $set: req.body });
+    //   let user = await User.findOne({ _id: req.id });
+    //   if (user) {
+    //     res.status(200).json(
+    //       output("Updated Profile", {
+    //         fname: user.fname,
+    //         lname: user.lname,
+    //         username: user.username,
+    //         email: user.email,
+    //         password: user.password,
+    //         img: user.img,
+    //       })
+    //     );
+    //   } else {
+    //     res.json(output("Coud Not Update Profile"));
+    //   }
+    // } else {
+    //   output("No fields given to update");
+    // }
   } catch {
     res.status(500).json(output("Update Profile Failed"));
   }
