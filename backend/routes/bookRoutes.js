@@ -10,32 +10,32 @@ const output = require("../utils/output");
 router.get("/favourites", protect, async (req, res) => {
   const id = req.id;
   let user = await User.findOne({ _id: id }).populate({
-      path: "favourites",
-      populate: [
-        {
-          path: "author",
-        },
-        {
-          path: "category"
-        }
-      ],
-    });
+    path: "favourites",
+    populate: [
+      {
+        path: "author",
+      },
+      {
+        path: "category",
+      },
+    ],
+  });
   let myBooks = [];
-    user.favourites.map((book) => {
-      myBook = {
-        bookID: book._id,
-        title: book.title,
-        author: book.author.aname,
-        authorID: book.author._id,
-        category: book.category.cname,
-        rating: book.rating,
-        reviews: book.reviews,
-        isFavourite: book.isFavourite,
-        url: book.url,
-        description: book.description,
-      };
-      myBooks.push(myBook);
-    });
+  user.favourites.map((book) => {
+    myBook = {
+      bookID: book._id,
+      title: book.title,
+      author: book.author.aname,
+      authorID: book.author._id,
+      category: book.category.cname,
+      rating: book.rating,
+      reviews: book.reviews,
+      isFavourite: book.isFavourite,
+      url: book.url,
+      description: book.description,
+    };
+    myBooks.push(myBook);
+  });
   if (user) {
     res.status(200).json(
       output("User Favourites", {
@@ -51,20 +51,20 @@ router.get("/favourites", protect, async (req, res) => {
 router.put("/favourites/add", protect, async (req, res) => {
   const id = req.id;
   let user = await User.findOne({ _id: id });
-  if (user) {
-    console.log("here", user.favourites);
-    if (user.favourites.length > 1) {
+  console.log("user", user);
+  console.log("bookId", req.body.id);
+  if (user && req.body.id) {
+    console.log("user fav b4 add", user.favourites);
+    if (user.favourites && user.favourites.length > 0) {
       if (
-        user.favourites.filter((i) => i.toString() === req.body._id).length > 0
+        user.favourites.filter((i) => i.toString() === req.body.id).length > 0
       ) {
         return res.status(400).json({ msg: "book already favourited" });
       }
     }
-    user.favourites.push(req.body._id);
+    user.favourites.push(req.body.id);
     await user.save();
-    let book = await Book.findOne({ _id: req.body._id });
-    book.isFavourite = true;
-    await book.save();
+    console.log("user fav after add", user.favourites);
     res.status(200).json(
       output("User Favourites", {
         favourites: user.favourites,
@@ -79,17 +79,18 @@ router.put("/favourites/add", protect, async (req, res) => {
 router.put("/favourites/remove", protect, async (req, res) => {
   const id = req.id;
   let user = await User.findOne({ _id: id });
-  if (user) {
-    if (
-      user.favourites.filter((i) => i.toString() === req.body._id).length === 0
-    ) {
-      return res.status(400).json({ msg: "book has not been favourited" });
-    }
+  if (user.favourites && user.favourites.length > 0 && req.body.id) {
+    // if (
+    //   user.favourites.filter((i) => i.toString() === req.body._id).length === 0
+    // ) {
+    //   return res.status(400).json({ msg: "book has not been favourited" });
+    // }
     const removeIndex = user.favourites
       .map((i) => i.toString())
-      .indexOf(req.body._id);
+      .indexOf(req.body.id);
     user.favourites.splice(removeIndex, 1);
     await user.save();
+    console.log("user fav after remove", user.favourites);
     res.status(200).json(
       output("User Favourites", {
         favourites: user.favourites,
@@ -238,7 +239,7 @@ router.get("/:id", protect, async (req, res) => {
       //   ],
       // }
     );
-    console.log(book);
+    console.log("get book by id", book);
     let myBook = {
       bookID: book._id,
       title: book.title,
