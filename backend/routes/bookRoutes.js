@@ -2,6 +2,7 @@ const express = require("express");
 const User = require("../models/userModel");
 const Book = require("../models/bookModel");
 const Category = require("../models/categoryModel");
+const Review = require("../models/reviewModel");
 const router = express.Router();
 const protect = require("../utils/authMiddleware");
 const output = require("../utils/output");
@@ -98,6 +99,51 @@ router.put("/favourites/remove", protect, async (req, res) => {
     );
   } else {
     res.json(output("Coud Not Get favourites"));
+  }
+});
+
+//add reviews
+router.put("/review/add", protect, async (req, res) => {
+  const id = req.id;
+  let user = await User.findOne({ _id: id });
+  
+  if (req.body.id && req.body.review) {
+    let book = await Book.findOne({ _id: req.body.id });
+    let rev ={
+      reviewer: user.username,
+      review: req.body.review,
+    }
+    book.reviews.push(rev);
+    await book.save();
+    res.status(200).json(
+      output("Book Reviews", {
+        title: book.title,
+        reviews: book.reviews
+      })
+    );
+  
+  } else {
+    res.json(output("id or review not found"));
+  }
+});
+
+//add rating
+router.put("/rating/add", protect, async (req, res) => {
+  console.log("id", req.body.id)
+  console.log("rating", req.body.rating)
+  if (req.body.id && req.body.rating) {
+    let book = await Book.findOne({ _id: req.body.id });
+    book.ratings.push(req.body.rating);
+    book.rating = book.ratings.reduce((a, b) => a + b, 0)/ book.ratings.length
+    await book.save();
+    res.status(200).json(
+      output("Book Reviews", {
+        title: book.title,
+        avgRating: book.rating
+      })
+    );
+  } else {
+    res.json(output("id or rating not found"));
   }
 });
 
